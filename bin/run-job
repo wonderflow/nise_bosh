@@ -14,7 +14,7 @@ config = {
 
 opt = OptionParser.new
 opt.on('-m MONITRC', 'Path to the monitrc file (default: #{config[:monitrc]})') {|v| config[:monitrc] = v }
-opt.on('-t TIMEOUT', 'Seconds to timeout (default: #{config[:timeout]})') {|v| config[:timeout] = v }
+opt.on('-t TIMEOUT', 'Seconds to timeout (default: #{config[:timeout]})') {|v| config[:timeout] = v.to_i }
 opt.banner = <<EOF
 Usage: job-ctl [OPTION]... (start|stop|status)
 EOF
