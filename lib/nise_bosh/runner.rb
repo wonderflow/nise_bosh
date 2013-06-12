@@ -30,7 +30,7 @@ class Runner
     opt.on('-d INSTALL_DIR', 'Install directory') { |v| @options[:install_dir] = v }
     opt.on('--working-dir WORKING_DIR', 'Temporary working directory') {|v| @options[:working_dir] = v }
     opt.on('-n IP_ADDRESS', 'IP address for this host') { |v| @options[:ip_address] = v }
-    opt.on('-i INDEX_NUMBER', 'Index number for this host') { |v| @options[:index] = v }
+    opt.on('-i INDEX_NUMBER', 'Index number for this host') { |v| @options[:index] = v.to_i }
     opt.on('-r RELEASE_FILE', 'Release file') { |v| @options[:release_file] = v }
     opt.on('-f', 'Force compile') { |v| @options[:force_compile] = true }
     opt.on('--keep-monit-files', 'Keep existing monit files') { |v| @options[:keep_monit_files] = true }

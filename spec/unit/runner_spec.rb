@@ -138,6 +138,12 @@ describe Runner do
       expect_file_exists(install_dir, "monit", "job", "0000_yellows.yellows.monitrc").to be_false
     end
 
+    it "should change index value to integer when -i option given." do
+      options = "-i 1 -d #{install_dir} --working-dir #{working_dir} #{release_dir} #{deploy_manifest} #{success_job}".split
+      runner = Runner.new(options)
+      expect(runner.instance_variable_get("@options")[:index]).to eq(1)
+    end
+
   end
 
   context "packages mode" do
