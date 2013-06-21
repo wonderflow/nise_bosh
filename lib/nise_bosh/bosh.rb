@@ -178,7 +178,7 @@ end
 
 
 class Bosh::Agent::ApplyPlan::Job
-  def fetch_template
+  def fetch_bits
     FileUtils.mkdir_p(File.dirname(@install_path))
     FileUtils.mkdir_p(File.dirname(@link_path))
 
