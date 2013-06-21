@@ -5,9 +5,9 @@
 
 ## What's this?
 
-Nise BOSH is a lightweight BOSH emulator. You can easily install multiple BOSH packages on your servers by Nise BOSH commands. 'Nise' means 'Pseudo' in Japanese.
+Nise BOSH is a lightweight BOSH emulator. You can easily install multiple BOSH packages on your servers with Nise BOSH commands. 'Nise' means 'Pseudo' in Japanese.
 
-## QUick Links
+## Quick Links
 
 * [Cloud Foundry v2 installer with Nise BOSH](https://github.com/yudai/cf_nise_installer)
   * One liner CF installer for both local machines and Vagrant
