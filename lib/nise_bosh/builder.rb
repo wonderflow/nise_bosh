@@ -136,8 +136,9 @@ module NiseBosh
         copy_release_file_relative(find_package_archive(package), release_dir)
       end
 
-      job_templates(job).each do |job_template|
-        copy_release_file_relative(find_job_template_archive(job_template), release_dir)
+      # include all job templates
+      job_template_definitions.each do |job_template_definition|
+        copy_release_file_relative(find_job_template_archive(job_template_definition["name"]), release_dir)
       end
 
       FileUtils.cp(@release_file, File.join(@options[:working_dir], "release.yml"))
@@ -156,6 +157,10 @@ module NiseBosh
       to_path = File.join(to_release_dir, from_path[@options[:repo_dir].length..-1])
       FileUtils.mkdir_p(File.dirname(to_path))
       FileUtils.cp_r(from_path, to_path)
+    end
+
+    def job_template_definitions()
+      @release["jobs"]
     end
 
     def job_template_definition(name)

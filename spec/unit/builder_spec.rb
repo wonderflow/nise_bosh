@@ -202,6 +202,7 @@ describe NiseBosh do
         system("tar xvzf #{file_name} > /dev/null")
         expect_to_same(%W{#{options[:repo_dir]} dev_releases #{release_name}-#{release_version}.yml}, [@archive_check_dir, "release.yml"])
         expect_file_exists(@archive_check_dir, "release", ".dev_builds", "jobs", "angel", "1.1-dev.tgz").to be_true
+        expect_file_exists(@archive_check_dir, "release", ".dev_builds", "jobs", "yellows", "0.1-dev.tgz").to be_true
         expect_file_exists(@archive_check_dir, "release", ".final_builds", "packages", "luca", "1.tgz").to be_true
         expect_file_exists(@archive_check_dir, "release", ".dev_builds", "packages", "miku", "1.1-dev.tgz").to be_true
       end

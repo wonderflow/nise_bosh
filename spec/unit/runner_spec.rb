@@ -174,13 +174,23 @@ describe Runner do
       setup_directory(archive_dir)
     end
 
-    it "should create job archive" do
+    it "should create a installable job archive" do
       if File.exists?(default_archive_name)
         raise "Oops, archive file already exists"
       end
       out = %x[bundle exec ./bin/nise-bosh -y -a -d #{install_dir} --working-dir #{working_dir} #{release_dir} #{deploy_manifest} #{success_job} 2>&1]
       expect($?.exitstatus).to eq(0)
       expect_file_exists(default_archive_name).to be_true
+
+      extraction_dir = File.join(tmp_dir, "archive")
+      abs_archive = File.absolute_path(default_archive_name)
+      FileUtils.mkdir_p(extraction_dir)
+      FileUtils.cd(extraction_dir) do
+        `tar xvzf #{abs_archive}`
+      end
+      out = %x[bundle exec ./bin/nise-bosh -y -d #{install_dir} --working-dir #{working_dir} -r #{extraction_dir}/release.yml #{extraction_dir}/release #{deploy_manifest} #{success_job} > /dev/null]
+      expect($?.exitstatus).to eq(0)
+
       FileUtils.rm(default_archive_name)
     end
 

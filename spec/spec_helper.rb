@@ -1,7 +1,7 @@
 shared_context "default values" do
   let(:tmp_dir) { File.join("/", "tmp", "nise_bosh_spec") }
   let(:install_dir) { File.join(tmp_dir, "install") }
-  let(:working_dir) { File.join(tmp_dir, "nise_bosh_spec") }
+  let(:working_dir) { File.join(tmp_dir, "working") }
   let(:assets_dir) { File.join(".", "spec", "assets") }
   let(:release_dir) { File.join(assets_dir, "release") }
   let(:release_noindex_dir) { File.join(assets_dir, "release_noindex") }
