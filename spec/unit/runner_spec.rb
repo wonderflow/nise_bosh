@@ -95,7 +95,7 @@ describe Runner do
     it "should raise an error when given release has no release index" do
       out = %x[bundle exec ./bin/nise-bosh -y -d #{install_dir} --working-dir #{working_dir} #{release_noindex_dir} #{deploy_manifest} #{success_job} 2>&1]
       expect($?.exitstatus).to eq(1)
-      expect(out).to eq("No release index found!\nTry `bosh cleate release` in your release repository.\n")
+      expect(out).to eq("No release index found!\nTry `bosh create release` in your release repository.\n")
     end
 
     it "should raise an error when execution of packaging script fails" do
