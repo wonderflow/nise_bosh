@@ -57,7 +57,7 @@ module NiseBosh
       dev_index = File.exists?(dev_index_path) ? YAML.load_file(dev_index_path)["builds"] : {}
 
       if @options[:release_file].nil? && final_index.size == 0 && dev_index.size == 0
-        raise "No release index found!\nTry `bosh cleate release` in your release repository."
+        raise "No release index found!\nTry `bosh create release` in your release repository."
       end
       newest_release = get_newest_release(final_index.merge(dev_index).map {|k, v| v["version"]})
 

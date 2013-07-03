@@ -35,7 +35,7 @@ describe NiseBosh do
     it "should raise an error when repo_dir does have no release index" do
       expect do
         NiseBosh::Builder.new(options.merge({:repo_dir => File.join(File.expand_path("."), "spec", "assets", "release_noindex")}), logger)
-      end.to raise_error("No release index found!\nTry `bosh cleate release` in your release repository.")
+      end.to raise_error("No release index found!\nTry `bosh create release` in your release repository.")
     end
   end
 
