@@ -251,5 +251,4 @@ describe NiseBosh do
       expect(@nb.package_exists?("not_exist_package")).to be_false
     end
   end
-
 end

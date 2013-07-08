@@ -133,12 +133,16 @@ module NiseBosh
       FileUtils.mkdir_p(release_dir)
 
       resolve_dependency(job_all_packages(job)).each do |package|
-        copy_release_file_relative(find_package_archive(package), release_dir)
+        file = find_package_archive(package)
+        copy_release_file_relative(file, release_dir)
+        copy_release_file_relative(File.join(File.dirname(file), "index.yml"), release_dir)
       end
 
       # include all job templates
       job_template_definitions.each do |job_template_definition|
-        copy_release_file_relative(find_job_template_archive(job_template_definition["name"]), release_dir)
+        file = find_job_template_archive(job_template_definition["name"])
+        copy_release_file_relative(file, release_dir)
+        copy_release_file_relative(File.join(File.dirname(file), "index.yml"), release_dir)
       end
 
       FileUtils.cp(@release_file, File.join(@options[:working_dir], "release.yml"))
@@ -169,29 +173,6 @@ module NiseBosh
 
     def package_definition(name)
       find_by_name(@release["packages"], name)
-    end
-
-    def find_job_template_archive(name)
-      job = job_template_definition(name)
-      find_archive(job, "jobs")
-    end
-
-    def find_package_archive(name)
-      package = package_definition(name)
-      find_archive(package, "packages")
-    end
-
-    def find_archive(item, type)
-      v = item["version"]
-      major, minor = v.to_s.split("-")
-      file_name = File.join(
-        @options[:repo_dir],
-        minor == "dev" ? ".dev_builds" : ".final_builds",
-        type, item["name"], "#{v}.tgz")
-      unless File.exists?(file_name)
-        raise "Archive file for #{item["name"]} not found in #{file_name}."
-      end
-      File.expand_path(file_name)
     end
 
     def install_packages(packages, no_dependency = false)
@@ -309,6 +290,18 @@ module NiseBosh
 
     def job_exists?(name)
       !find_by_name(@deploy_manifest["jobs"], name).nil?
+    end
+
+    def find_job_template_archive(name)
+      @release_blobs ||= File.exist?(File.join(@options[:repo_dir], "config")) ? Bosh::Cli::Release.new(@options[:repo_dir]).blobstore : nil
+      @release_compiler ||= Bosh::Cli::ReleaseCompiler.new(@release_file, @release_blobs, [], @options[:repo_dir])
+      @release_compiler.find_job(OpenStruct.new(job_template_definition(name)))
+    end
+
+    def find_package_archive(name)
+      @release_blobs ||= File.exist?(File.join(@options[:repo_dir], "config")) ? Bosh::Cli::Release.new(@options[:repo_dir]).blobstore : nil
+      @release_compiler ||= Bosh::Cli::ReleaseCompiler.new(@release_file, @release_blobs, [], @options[:repo_dir])
+      @release_compiler.find_package(OpenStruct.new(package_definition(name)))
     end
 
     def find_by_name(set, name)

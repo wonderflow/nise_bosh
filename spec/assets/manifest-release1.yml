@@ -1,0 +1,11 @@
+---
+jobs:
+  - name: legna
+    template: angel
+
+properties:
+  miku:
+    san:
+      maji: tenshi
+  hide:
+    value: true

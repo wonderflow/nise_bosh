@@ -5,10 +5,13 @@ shared_context "default values" do
   let(:assets_dir) { File.join(".", "spec", "assets") }
   let(:release_dir) { File.join(assets_dir, "release") }
   let(:release_noindex_dir) { File.join(assets_dir, "release_noindex") }
+  let(:release_nolocal_dir) { File.join(assets_dir, "release_nolocal") }
   let(:deploy_manifest) { File.join(assets_dir, "manifest.yml") }
+  let(:deploy_manifest_release1) { File.join(assets_dir, "manifest-release1.yml") }
   let(:release_name) { "assets" }
   let(:release_version) { "1.3-dev" }
   let(:success_job) { "legna" }
+  let(:success_job_template) { "angel" }
   let(:fail_job) { "fail_job" }
   let(:packages) {
     [{:name => "miku", :file_contents => "miku 1.1-dev\n", :version => "1.1-dev"},

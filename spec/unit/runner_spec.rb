@@ -144,6 +144,14 @@ describe Runner do
       expect(runner.instance_variable_get("@options")[:index]).to eq(1)
     end
 
+    it "should setup given job with the release which has no local cached archives" do
+      cache_dir = File.join(tmp_dir, File.basename(release_nolocal_dir))
+      FileUtils.mkdir_p(cache_dir)
+      FileUtils.cp_r(release_nolocal_dir, tmp_dir)
+      out = %x[echo y | bundle exec ./bin/nise-bosh -d #{install_dir} --working-dir #{working_dir} #{cache_dir} #{deploy_manifest_release1} #{success_job} > /dev/null]
+      expect($?.exitstatus).to eq(0)
+      expect_contents(install_dir, "packages", "miku", ".version").to eq("1\n")
+    end
   end
 
   context "packages mode" do
