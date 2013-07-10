@@ -38,15 +38,15 @@ Run the command below:
 
 ### Release repository
 
-Nise BOSH requires a clone of the 'release' repository you want to install (e.g. cf-release for Cloud Foundry). Clone the repository and checkout its submodules at your preferred directory with the `update` script.
+Nise BOSH requires a clone of the 'release' repository you want to install (e.g. cf-release for Cloud Foundry). Clone the repository with the `git` command.
 
     git clone git@github.com:cloudfoundry/cf-release.git
-    cd cf-release
-    ./update
 
-### Build a release
+### Build a release (Optional)
 
-You have to build a release of your release repository to create package tarballs.
+You can skip this section when you have no modification to the release repository. The latest `final` release will be used automatically.
+
+When you modify the cloned repository, you need to create a `dev` (or `final`) release to install it with Nise BOSH.
 
 If you have not installed BOSH CLI. You can install it with the `gem` command.
 
@@ -58,9 +58,7 @@ Then build a release, this might take several minutes at the first run.
 
 You will be asked the name of the build, input the preferred name such as 'appcloud'.
 
-The command generates "dev_releases" and ".dev_builds" directories in your cloned release directory. You can find the "release file" for the build at "dev_release/\<build_name\>-\<version\>-dev.yml", which includes the list of all the packages, jobs, and their dependencies.
-
-Note that, when you have any modification in your release repository, you have to commit them once before building a new release. You might need to execute 'bosh create release ' with "--force" option when you have added new files into the blobs directory.
+Note that when your release directory is `dirty` (uncommitted files exist), you need to execute 'bosh create release ' with "--force" option.
 
 ### Describe a deployment manifest
 
