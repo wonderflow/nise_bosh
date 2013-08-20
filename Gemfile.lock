@@ -3,6 +3,13 @@ GIT
   revision: f694e3d244075e6a6d5e5bf34a6528f9d52599a0
   submodules: true
   specs:
+    blobstore_client (1.5.0.pre.3)
+      aws-sdk (= 1.8.5)
+      bosh_common (~> 1.5.0.pre.3)
+      fog (~> 1.14.0)
+      httpclient (= 2.2.4)
+      multi_json (~> 1.1)
+      ruby-atmos-pure (~> 1.0.5)
     bosh_agent (1.5.0.pre.3)
       blobstore_client (~> 1.5.0.pre.3)
       bosh_common (~> 1.5.0.pre.3)
@@ -36,6 +43,7 @@ GIT
       netaddr (~> 1.5.0)
       progressbar (~> 0.9.0)
       terminal-table (~> 1.4.3)
+    bosh_common (1.5.0.pre.3)
     bosh_cpi (1.5.0.pre.3)
       bosh_common (~> 1.5.0.pre.3)
     bosh_encryption (1.5.0.pre.3)
@@ -101,14 +109,6 @@ GEM
       nokogiri (>= 1.4.4)
       uuidtools (~> 2.1)
     bcrypt-ruby (3.0.1)
-    blobstore_client (1.5.0.pre.877)
-      aws-sdk (= 1.8.5)
-      bosh_common (~> 1.5.0.pre.877)
-      fog (~> 1.14.0)
-      httpclient (= 2.2.4)
-      multi_json (~> 1.1)
-      ruby-atmos-pure (~> 1.0.5)
-    bosh_common (1.5.0.pre.877)
     bosh_vcloud_cpi (0.4.9)
       bosh_common
       bosh_cpi (>= 0.4.2)
@@ -216,8 +216,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  blobstore_client!
   bosh_agent!
   bosh_cli!
+  bosh_common!
   director!
   rake
   rspec
