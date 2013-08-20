@@ -7,4 +7,6 @@ before_install:
   - git submodule update --init --recursive
   - sudo ./bin/init
 
-script: rvmsudo bundle exec rspec spec
+script:
+  - rvmsudo gem install bundler
+  - rvmsudo bundle exec rspec spec
