@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/cloudfoundry/bosh.git
-  revision: f694e3d244075e6a6d5e5bf34a6528f9d52599a0
+  revision: 9d989ab102d29620beee9f5f45d47c74190c046a
   submodules: true
   specs:
     blobstore_client (1.5.0.pre.3)
@@ -10,6 +10,9 @@ GIT
       httpclient (= 2.2.4)
       multi_json (~> 1.1)
       ruby-atmos-pure (~> 1.0.5)
+    bosh-core (1.5.0.pre.3)
+    bosh-stemcell (1.5.0.pre.3)
+      bosh_aws_cpi (~> 1.5.0.pre.3)
     bosh_agent (1.5.0.pre.3)
       blobstore_client (~> 1.5.0.pre.3)
       bosh_common (~> 1.5.0.pre.3)
@@ -140,7 +143,7 @@ GEM
     json_pure (1.8.0)
     log4r (1.1.10)
     membrane (0.0.2)
-    mime-types (1.24)
+    mime-types (1.25)
     minitar (0.5.4)
     multi_json (1.7.9)
     nats (0.4.28)
@@ -189,8 +192,8 @@ GEM
       httpclient
       nokogiri (~> 1.5)
       rest-client
-    rufus-scheduler (2.0.23)
-      tzinfo (>= 0.3.23)
+    rufus-scheduler (2.0.24)
+      tzinfo (>= 0.3.22)
     sequel (3.43.0)
     sigar (0.7.2)
     sinatra (1.4.3)
@@ -217,6 +220,8 @@ PLATFORMS
 
 DEPENDENCIES
   blobstore_client!
+  bosh-core!
+  bosh-stemcell!
   bosh_agent!
   bosh_cli!
   bosh_common!
