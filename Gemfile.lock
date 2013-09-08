@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/cloudfoundry/bosh.git
-  revision: 9d989ab102d29620beee9f5f45d47c74190c046a
+  revision: fbb73b1d320c749b101d1fd2c3dbb1fd6bd69060
   submodules: true
   specs:
     blobstore_client (1.5.0.pre.3)
@@ -145,7 +145,7 @@ GEM
     membrane (0.0.2)
     mime-types (1.25)
     minitar (0.5.4)
-    multi_json (1.7.9)
+    multi_json (1.8.0)
     nats (0.4.28)
       daemons (>= 1.1.5)
       eventmachine (= 0.12.10)

@@ -93,7 +93,7 @@ class Bosh::Agent::Config
   end
 
   def self.platform
-    @@platform ||= Bosh::Agent::Platform.new("dummy").platform
+    @@platform ||= Bosh::Agent::Platform.platform("dummy")
   end
 
   def self.base_dir
