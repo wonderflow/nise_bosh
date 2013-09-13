@@ -86,6 +86,11 @@ class Bosh::Director::InstanceUpdater
   end
 end
 
+class DummyPlatform
+  def method_missing(name, *args)
+  end
+end
+
 
 class Bosh::Agent::Config
   def self.state
@@ -93,7 +98,7 @@ class Bosh::Agent::Config
   end
 
   def self.platform
-    @@platform ||= Bosh::Agent::Platform.platform("dummy")
+    @@platform ||= DummyPlatform.new
   end
 
   def self.base_dir
