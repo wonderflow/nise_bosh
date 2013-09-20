@@ -91,22 +91,25 @@ class DummyPlatform
   end
 end
 
-
-class Bosh::Agent::Config
-  def self.state
+class Bosh::Agent::Configuration
+  def state
     @@state ||= Bosh::Agent::State.new(File.join(self.base_dir, "bosh", "state.yml"))
   end
 
-  def self.platform
+  def platform
     @@platform ||= DummyPlatform.new
   end
 
-  def self.base_dir
+  def base_dir
     @@nise_bosh.options[:install_dir]
   end
 
-  def self.logger
+  def logger
     @@logger ||= Logger.new("/dev/null")
+  end
+
+  def configure
+    true
   end
 
   def self.nise_bosh
@@ -115,10 +118,6 @@ class Bosh::Agent::Config
 
   def self.set_nise_bosh(nb)
     @@nise_bosh = nb
-  end
-
-  def self.configure
-    true
   end
 end
 
@@ -190,7 +189,7 @@ class Bosh::Agent::ApplyPlan::Job
     # no blobstore
     FileUtils.mkdir_p(@install_path)
     Dir.chdir(@install_path) do
-      output = `tar --no-same-owner -zxvf #{Bosh::Agent::Config.nise_bosh.find_job_template_archive(@template)}`
+      output = `tar --no-same-owner -zxvf #{Bosh::Agent::Configuration.nise_bosh.find_job_template_archive(@template)}`
       raise Bosh::Agent::MessageHandlerError.new(
         "Failed to unpack blob", output) unless $?.exitstatus == 0
     end
@@ -227,7 +226,7 @@ class Bosh::Agent::Message::CompilePackage
     @source_file = File.join(compile_tmp, @blobstore_id)
     FileUtils.rm @source_file if File.exist?(@source_file)
 
-    FileUtils.cp(Bosh::Agent::Config.nise_bosh.find_package_archive(@package_name), @source_file)
+    FileUtils.cp(Bosh::Agent::Configuration.nise_bosh.find_package_archive(@package_name), @source_file)
   end
 
   def delete_tmp_files

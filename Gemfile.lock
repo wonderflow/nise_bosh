@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/cloudfoundry/bosh.git
-  revision: 4e66e5f1b6e1c195d9e4d054a7f61257870daab9
+  revision: 15764a191b499f0955528dcede33a4fcb4605cda
   submodules: true
   specs:
     blobstore_client (1.5.0.pre.3)
