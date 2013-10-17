@@ -1,4 +1,4 @@
-require "director"
+require "bosh/director"
 require "cli"
 require "bosh_agent"
 
