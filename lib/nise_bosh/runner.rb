@@ -26,6 +26,7 @@ class Runner
     opt.on('-t', 'Install only template files') { |v| @template_only = true }
     opt.on('--no-dependency', 'Install no dependeny packages (use with -p option)') { |v| @no_dependency = true }
     opt.on('-a', 'Create an archive for the job') { |v| @run_mode = :archive }
+    opt.on('-w', 'Show selected release file') { |v| @run_mode = :show_release_file }
 
     opt.on('-d INSTALL_DIR', 'Install directory') { |v| @options[:install_dir] = v }
     opt.on('--working-dir WORKING_DIR', 'Temporary working directory') {|v| @options[:working_dir] = v }
@@ -52,6 +53,8 @@ class Runner
       @output_file = argv.shift
     elsif @run_mode== :package && argv.size >= 1
       @package_names = argv
+    elsif @run_mode== :show_release_file && argv.size == 0
+      @options[:install_dir] = @options[:working_dir]
     else
       $stderr.puts("Arguments number error!")
       puts(opt.help)
@@ -63,7 +66,6 @@ class Runner
     begin
       @nb = NiseBosh::Builder.new(@options, Logger.new($stdout))
       send("run_#{@run_mode}_mode")
-      puts "Done!"
     rescue RuntimeError => e
       $stderr.puts(e.message)
       exit(1)
@@ -81,6 +83,8 @@ class Runner
   end
 
   def run_default_mode()
+    @nb.initialize_environment()
+
     unless @nb.job_exists?(@job_name)
       raise "Given job does not exist!"
     end
@@ -99,6 +103,7 @@ class Runner
     confirm()
 
     @nb.install_job(@job_name, @template_only)
+    puts "Done!"
   end
 
   def run_archive_mode()
@@ -106,6 +111,8 @@ class Runner
   end
 
   def run_package_mode()
+    @nb.initialize_environment()
+
     @package_names.each do |package|
       unless @nb.package_exists?(package)
         raise "Given package #{package} does not exist!"
@@ -124,5 +131,10 @@ class Runner
     confirm()
 
     @nb.install_packages(@package_names, @no_dependency)
+    puts "Done!"
+  end
+
+  def run_show_release_file_mode()
+    puts @nb.release_file
   end
 end

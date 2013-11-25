@@ -215,4 +215,12 @@ describe Runner do
       expect_file_exists(archive_name).to be_true
     end
   end
+
+  context "show release file mode" do
+    it "should show the selected release file" do
+      out = %x[bundle exec ./bin/nise-bosh -w #{release_dir}]
+      expect($?.exitstatus).to eq(0)
+      expect(out).to eq(File.join(File.expand_path(release_dir), "dev_releases", "#{release_name}-#{release_version}.yml") + "\n")
+    end
+  end
 end

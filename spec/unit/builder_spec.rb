@@ -19,6 +19,7 @@ describe NiseBosh do
     setup_directory(install_dir)
 
     @nb = NiseBosh::Builder.new(options, logger)
+    @nb.initialize_environment()
     @current_ip = current_ip()
   end
 

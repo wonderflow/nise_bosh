@@ -18,13 +18,11 @@ module NiseBosh
       Bosh::Agent::Configuration.set_nise_bosh(self)
       Bosh::Agent::Message::Apply.set_nise_bosh(self)
       Bosh::Director::DeploymentPlan::Template.set_nise_bosh(self)
-
-      initialize_directories
-      initialize_monit
     end
 
     attr_reader :logger
     attr_reader :options
+    attr_reader :release_file
 
     def check_ruby_version
       if RUBY_VERSION < '1.9.0'
@@ -72,15 +70,6 @@ module NiseBosh
       end
     end
 
-    def initialize_directories
-      %w(bosh jobs packages monit store shared).each do |dir|
-        FileUtils.mkdir_p(File.join(@options[:install_dir], dir))
-      end
-      FileUtils.chown('vcap', 'vcap', File.join(@options[:install_dir], "shared"))
-
-      Bosh::Agent::Bootstrap.new.setup_data_sys
-    end
-
     def get_newest_release(index)
       sort_release_version(index).last
     end
@@ -121,6 +110,21 @@ module NiseBosh
         end
       end
     end
+
+    def initialize_environment
+      initialize_directories
+      initialize_monit
+    end
+
+    def initialize_directories
+      %w(bosh jobs packages monit store shared).each do |dir|
+        FileUtils.mkdir_p(File.join(@options[:install_dir], dir))
+      end
+      FileUtils.chown('vcap', 'vcap', File.join(@options[:install_dir], "shared"))
+
+      Bosh::Agent::Bootstrap.new.setup_data_sys
+    end
+
 
     def initialize_monit()
       Bosh::Agent::Monit.setup_monit_user
