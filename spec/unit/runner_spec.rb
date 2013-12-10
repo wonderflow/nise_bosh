@@ -222,5 +222,11 @@ describe Runner do
       expect($?.exitstatus).to eq(0)
       expect(out).to eq(File.join(File.expand_path(release_dir), "dev_releases", "#{release_name}-#{release_version}.yml") + "\n")
     end
+
+    it "should show the version number of selected release file when given -m option" do
+      out = %x[bundle exec ./bin/nise-bosh -w -m #{release_dir}]
+      expect($?.exitstatus).to eq(0)
+      expect(out).to eq(release_version + "\n")
+    end
   end
 end

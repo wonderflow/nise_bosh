@@ -10,6 +10,7 @@ class Runner
     @run_mode = :default
     @force_compile = false
     @no_dependency = false
+    @version_number_only = false
 
     @options = {
       :install_dir => File.join("/", "var", "vcap"),
@@ -27,6 +28,7 @@ class Runner
     opt.on('--no-dependency', 'Install no dependeny packages (use with -p option)') { |v| @no_dependency = true }
     opt.on('-a', 'Create an archive for the job') { |v| @run_mode = :archive }
     opt.on('-w', 'Show selected release file') { |v| @run_mode = :show_release_file }
+    opt.on('-m', 'Show version number only (with -w option)') { |v| @version_number_only = true }
 
     opt.on('-d INSTALL_DIR', 'Install directory') { |v| @options[:install_dir] = v }
     opt.on('--working-dir WORKING_DIR', 'Temporary working directory') {|v| @options[:working_dir] = v }
@@ -135,6 +137,10 @@ class Runner
   end
 
   def run_show_release_file_mode()
-    puts @nb.release_file
+    if @version_number_only
+      puts @nb.release["version"]
+    else
+      puts @nb.release_file
+    end
   end
 end

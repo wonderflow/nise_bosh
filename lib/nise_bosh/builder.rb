@@ -22,6 +22,7 @@ module NiseBosh
 
     attr_reader :logger
     attr_reader :options
+    attr_reader :release
     attr_reader :release_file
 
     def check_ruby_version
