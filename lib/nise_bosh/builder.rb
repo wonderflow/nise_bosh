@@ -6,7 +6,6 @@ module NiseBosh
   class Builder
     def initialize(options, logger)
       check_ruby_version
-      initialize_ip_address(options)
       initialize_options(options)
       initialize_release_file
       initialize_depoy_manifest
@@ -31,9 +30,8 @@ module NiseBosh
       end
     end
 
-    def initialize_ip_address(options)
-      @ip_address = options[:ip_address]
-      @ip_address ||= %x[ip -4 -o address show].match('inet ([\d.]+)/.*? scope global') { |md| md[1] }
+    def ip_address
+      @ip_address ||= @options[:ip_address] || %x[ip -4 -o address show].match('inet ([\d.]+)/.*? scope global') { |md| md[1] }
     end
 
     def initialize_options(options)
@@ -99,7 +97,7 @@ module NiseBosh
         # default values
         @deploy_manifest["name"] ||= "dummy"
         @deploy_manifest["releases"] ||= [{"name" => @release["name"], "version" => @release["version"]}]
-        @deploy_manifest["networks"] ||= [{"name" => "default", "subnets" => [{"range" => "#{@ip_address}/24", "cloud_properties" => {"name" => "DUMMY_VLAN"}, "static" => ["#{@ip_address} - #{@ip_address}"]}]}]
+        @deploy_manifest["networks"] ||= [{"name" => "default", "subnets" => [{"range" => "#{ip_address}/24", "cloud_properties" => {"name" => "DUMMY_VLAN"}, "static" => ["#{ip_address} - #{ip_address}"]}]}]
         @deploy_manifest["compilation"] ||= {"workers" => 1, "network" => "default", "cloud_properties" => {}}
         @deploy_manifest["update"] ||= {"canaries" => 1, "max_in_flight" => 1, "canary_watch_time" => "1-2", "update_watch_time" => "1-2"}
         @deploy_manifest["resource_pools"] ||= [{"name" => "default", "size" => 9999, "cloud_properties" => {}, "stemcell"=> {"name" => "dummy", "version" => "dummy"}, "network" => "default"}]
@@ -250,7 +248,7 @@ module NiseBosh
 
     def install_job(job_name, template_only = false)
       job_spec = find_by_name(@deploy_manifest["jobs"], job_name)
-      job_spec["networks"][0]["static_ips"] ||= [@ip_address]
+      job_spec["networks"][0]["static_ips"] ||= [ip_address]
 
       deployment_plan = Bosh::Director::DeploymentPlan::Planner.new(@deploy_manifest)
       deployment_plan.parse
