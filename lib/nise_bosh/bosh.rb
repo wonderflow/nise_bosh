@@ -13,6 +13,18 @@ class Bosh::Director::Config
   def self.event_log
     @@event_log ||= Bosh::Director::EventLog.new
   end
+
+  def self.blobstores
+    Bosh::Director::Blobstores.new()
+  end
+end
+
+class Bosh::Director::Blobstores
+  def initialize()
+  end
+  def blobstore()
+    "dummy"
+  end
 end
 
 
@@ -75,6 +87,11 @@ class Bosh::Director::DeploymentPlan::Instance
   end
 end
 
+class Bosh::Director::App
+  def self.instance
+    return Bosh::Director::Config
+  end
+end
 
 class Bosh::Director::InstanceUpdater
   def initialize(instance, event_ticker = nil)
