@@ -1,6 +1,17 @@
 require "bosh/director"
 require "cli"
 require "bosh_agent"
+require "rspec/mocks"
+
+class Bosh::Director::EventLog::Log
+  def initialize(io = nil)
+    RSpec::Mocks::setup(self)
+  end
+
+  def begin_stage(stage_name, total = nil, tag =[])
+    double(Bosh::Director::EventLog::Stage).as_null_object
+  end
+end
 
 class Bosh::Director::Config
   def self.cloud
@@ -16,6 +27,10 @@ class Bosh::Director::Config
 
   def self.blobstores
     Bosh::Director::Blobstores.new()
+  end
+
+  def self.event_log
+    Bosh::Director::EventLog::Log.new
   end
 end
 
