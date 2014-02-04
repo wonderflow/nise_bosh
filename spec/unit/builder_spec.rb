@@ -14,13 +14,14 @@ describe NiseBosh do
   }
   let(:logger) { Logger.new("/dev/null") }
 
-  before do
+  let(:nb) {
+    NiseBosh::Builder.new(options, logger)
+  }
+
+  before(:each) do
     setup_directory(working_dir)
     setup_directory(install_dir)
-
-    @nb = NiseBosh::Builder.new(options, logger)
-    @nb.initialize_environment()
-    @current_ip = current_ip()
+    nb.initialize_environment()
   end
 
   describe "#new" do
@@ -42,27 +43,27 @@ describe NiseBosh do
 
   describe "#run_packaging" do
     it "should create the install directory and run the packaging script" do
-      @nb.run_packaging(package[:name])
+      nb.run_packaging(package[:name])
       expect_contents(package_file_path(package)).to eq(package[:file_contents])
     end
 
     it "should raise an error when packaging script fails" do
-      expect { @nb.run_packaging("fail_packaging") }.to raise_error
+      expect { nb.run_packaging("fail_packaging") }.to raise_error
     end
   end
 
   describe "#resolve_dependency" do
     it "should resolve linear dependencies" do
-      expect(@nb.resolve_dependency(%w{tako kaito})).to eq(%w{miku luca tako kaito})
+      expect(nb.resolve_dependency(%w{tako kaito})).to eq(%w{miku luca tako kaito})
     end
 
     it "should resolve part-and-rejoin dependencies" do
-      expect(@nb.resolve_dependency(%w{meiko})).to eq(%w{miku luca tako meiko})
+      expect(nb.resolve_dependency(%w{meiko})).to eq(%w{miku luca tako meiko})
     end
 
     it "should raise an error when detects a cyclic dependency" do
-      @nb = NiseBosh::Builder.new(options.merge({:release_file => File.join(File.expand_path("."), "spec", "assets", "release_cyclic_dependency.yml")}), logger)
-      expect { @nb.resolve_dependency(%w{ren}) }.to raise_error
+      nb = NiseBosh::Builder.new(options.merge({:release_file => File.join(File.expand_path("."), "spec", "assets", "release_cyclic_dependency.yml")}), logger)
+      expect { nb.resolve_dependency(%w{ren}) }.to raise_error
     end
   end
 
@@ -70,24 +71,24 @@ describe NiseBosh do
     let(:version_file) { File.join(install_dir, "packages", package[:name], ".version") }
 
     it "should install the given package" do
-      @nb.install_package(package[:name])
+      nb.install_package(package[:name])
       expect_contents(package_file_path(package)).to eq(package[:file_contents])
       expect_contents(version_file).to eq("#{package[:version]}\n")
     end
 
     it "should not install the given package when the package is already installed" do
-      @nb.install_package(package[:name])
+      nb.install_package(package[:name])
       expect_contents(package_file_path(package)).to eq(package[:file_contents])
       expect_contents(version_file).to eq("#{package[:version]}\n")
       FileUtils.rm_rf(package_file_path(package))
       expect_file_exists(package_file_path(package)).to be_false
-      @nb.install_package(package[:name])
+      nb.install_package(package[:name])
       expect_file_exists(package_file_path(package)).to be_false
       expect_contents(version_file).to eq("#{package[:version]}\n")
     end
 
     it "should install the given package even if the package is already installed when force_compile option is true" do
-      @nb.install_package(package[:name])
+      nb.install_package(package[:name])
       expect_contents(package_file_path(package)).to eq(package[:file_contents])
       expect_contents(version_file).to eq("#{package[:version]}\n")
       FileUtils.rm_rf(package_file_path(package))
@@ -99,7 +100,7 @@ describe NiseBosh do
     end
 
     it "should delete the version file before start packaging" do
-      @nb.install_package(package[:name])
+      nb.install_package(package[:name])
       expect_contents(version_file).to eq("#{package[:version]}\n")
       expect do
         fail_while_packaging_nb = NiseBosh::Builder.new(options.merge({:force_compile => true}), logger)
@@ -117,7 +118,7 @@ describe NiseBosh do
     let(:related_packages) { %w{luca} }
 
     it "should install all related packages" do
-      @nb.install_packages(target_packages)
+      nb.install_packages(target_packages)
       (target_packages + related_packages).each do |package|
         expect_contents(install_dir, "packages", package, "dayo").to eq("tenshi\n")
       end
@@ -125,7 +126,7 @@ describe NiseBosh do
     end
 
     it "should install only given packages when given no_dependency" do
-      @nb.install_packages(target_packages, true)
+      nb.install_packages(target_packages, true)
       target_packages.each do |package|
         expect_contents(install_dir, "packages", package, "dayo").to eq("tenshi\n")
       end
@@ -138,13 +139,13 @@ describe NiseBosh do
   describe "#install_job" do
     def check_templates
       expect_contents(install_dir, "jobs", "angel", "config", "miku.conf")
-        .to eq("tenshi\n0\n#{@current_ip}\n")
+        .to eq("tenshi\n0\n#{current_ip}\n")
       expect_contents(install_dir, "monit", "job", job_monit_file)
         .to eq("monit mode manual")
     end
 
     it "should install packags and generate required files from template files" do
-      @nb.install_job("legna")
+      nb.install_job("legna")
       expect_contents(install_dir, "packages", "miku", "dayo").to eq("miku #{package[:version]}\n")
       expect_contents(install_dir, "packages", "luca", "dayo").to eq("tenshi\n")
       check_templates
@@ -152,40 +153,36 @@ describe NiseBosh do
     end
 
     it "should not install packags and only generate required files from template files when template_only given" do
-      @nb.install_job("legna", true)
+      nb.install_job("legna", true)
       expect_file_exists(install_dir, "packages", "miku", "dayo").to be_false
       expect_file_exists(install_dir, "packages", "luca", "dayo").to be_false
       check_templates
     end
 
     it "should fill templates with given IP address and index number, and save file" do
-      @nb = NiseBosh::Builder.new(options.merge({:ip_address => "39.39.39.39", :index => 39}), logger)
-      @nb.install_job("legna")
+      nb = NiseBosh::Builder.new(options.merge({:ip_address => "39.39.39.39", :index => 39}), logger)
+      nb.install_job("legna")
       expect_contents(install_dir, "jobs", "angel", "config", "miku.conf")
         .to eq("tenshi\n39\n39.39.39.39\n")
     end
 
     it "should keep existing monit files only when the option given" do
       yellow_monit = File.join(install_dir, "monit", "job", "0000_yellows.yellows.monitrc")
-      @nb.install_job("legna")
-      @nb = NiseBosh::Builder.new(options, logger)
-      @nb.install_job("yellows")
+      nb.install_job("legna")
+      nb = NiseBosh::Builder.new(options, logger)
+      nb.install_job("yellows")
       expect_file_exists(install_dir, "monit", "job", job_monit_file).to be_false
       expect_contents(yellow_monit).to eq("yellow_monit mode manual")
-      @nb = NiseBosh::Builder.new(options.merge({:keep_monit_files => true}), logger)
-      @nb.install_job("legna")
+      nb = NiseBosh::Builder.new(options.merge({:keep_monit_files => true}), logger)
+      nb.install_job("legna")
       check_templates
       expect_file_exists(yellow_monit).to be_true
    end
   end
 
   describe "#sort_release_version" do
-    before do
-      @nb = NiseBosh::Builder.new(options, logger)
-    end
-
     it "should sort version numbers" do
-      expect(@nb.sort_release_version(%w{1 2 1.1 1.1-dev 33 2.1-dev 33-dev 2.1}))
+      expect(nb.sort_release_version(%w{1 2 1.1 1.1-dev 33 2.1-dev 33-dev 2.1}))
         .to eq(%w{1 1.1-dev 1.1 2 2.1-dev 2.1 33-dev 33})
     end
   end
@@ -212,7 +209,7 @@ describe NiseBosh do
     it "create archive in current directory" do
       file_name = File.join(@archive_dir, default_archive_name)
       FileUtils.cd(@archive_dir) do
-        @nb.archive(success_job, file_name)
+        nb.archive(success_job, file_name)
         expect(File.exists?(file_name)).to be_true
       end
       check_archive_contents(file_name)
@@ -220,14 +217,14 @@ describe NiseBosh do
 
     it "create archive at given file path" do
       file_name = File.join(@archive_dir, "miku.tar.gz")
-      @nb.archive(success_job, file_name)
+      nb.archive(success_job, file_name)
       expect(File.exists?(file_name)).to be_true
       check_archive_contents(file_name)
     end
 
     it "create archive in given directory" do
       file_name = File.join(@archive_dir, default_archive_name)
-      @nb.archive(success_job, @archive_dir)
+      nb.archive(success_job, @archive_dir)
       expect(File.exists?(file_name)).to be_true
       check_archive_contents(file_name)
     end
@@ -235,21 +232,21 @@ describe NiseBosh do
 
   describe "#job_exists?" do
     it "should return true when given job exists" do
-      expect(@nb.job_exists?("legna")).to be_true
+      expect(nb.job_exists?("legna")).to be_true
     end
 
     it "should return false when given job does not exist" do
-      expect(@nb.job_exists?("not_exist_job")).to be_false
+      expect(nb.job_exists?("not_exist_job")).to be_false
     end
   end
 
   describe "#package_exists?" do
     it "should return true when given package exists" do
-      expect(@nb.package_exists?(package[:name])).to be_true
+      expect(nb.package_exists?(package[:name])).to be_true
     end
 
     it "should return false when given package does not exist" do
-      expect(@nb.package_exists?("not_exist_package")).to be_false
+      expect(nb.package_exists?("not_exist_package")).to be_false
     end
   end
 end

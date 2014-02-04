@@ -21,14 +21,13 @@ shared_context "default values" do
   let(:archive_dir) { File.join(tmp_dir, "archive") }
   let(:default_archive_name) { "assets-#{success_job}-#{release_version}.tar.gz" }
   let(:job_monit_file) { "0000_#{success_job}.angel.monitrc" }
+  let(:current_ip) {
+    %x[ip -4 -o address show].match('inet ([\d.]+)/.*? scope global') { |md| md[1] }
+  }
 end
 
 def package_file_path(package)
   File.join(install_dir, "packages", package[:name], "dayo")
-end
-
-def current_ip()
-  %x[ip -4 -o address show].match('inet ([\d.]+)/.*? scope global') { |md| md[1] }
 end
 
 def setup_directory(path)
