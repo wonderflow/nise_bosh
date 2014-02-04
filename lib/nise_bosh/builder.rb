@@ -97,7 +97,7 @@ module NiseBosh
         # default values
         @deploy_manifest["name"] ||= "dummy"
         @deploy_manifest["releases"] ||= [{"name" => @release["name"], "version" => @release["version"]}]
-        @deploy_manifest["networks"] ||= [{"name" => "default", "subnets" => [{"range" => "#{ip_address}/24", "cloud_properties" => {"name" => "DUMMY_VLAN"}, "static" => ["#{ip_address} - #{ip_address}"]}]}]
+        @deploy_manifest["networks"] ||= [{"name" => "default", "subnets" => [{"range" => "#{ip_address}/16", "cloud_properties" => {"name" => "DUMMY_VLAN"}, "static" => ["#{ip_address} - #{ip_address}"]}]}]
         @deploy_manifest["compilation"] ||= {"workers" => 1, "network" => "default", "cloud_properties" => {}}
         @deploy_manifest["update"] ||= {"canaries" => 1, "max_in_flight" => 1, "canary_watch_time" => "1-2", "update_watch_time" => "1-2"}
         @deploy_manifest["resource_pools"] ||= [{"name" => "default", "size" => 9999, "cloud_properties" => {}, "stemcell"=> {"name" => "dummy", "version" => "dummy"}, "network" => "default"}]
