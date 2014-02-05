@@ -8,5 +8,4 @@ before_install:
   - sudo ./bin/init
 
 script:
-  - rvmsudo gem install bundler
-  - rvmsudo bundle exec rspec spec
+  - rvmsudo -E bundle exec rspec spec
