@@ -8,4 +8,6 @@ before_install:
   - sudo ./bin/init
 
 script:
-  - rvmsudo -E bundle exec rspec spec
+  - sudo env PATH=$PATH gem install bundler
+  - sudo env PATH=$PATH bundle install
+  - sudo env PATH=$PATH bundle exec rspec spec
