@@ -81,9 +81,9 @@ describe NiseBosh do
       expect_contents(package_file_path(package)).to eq(package[:file_contents])
       expect_contents(version_file).to eq("#{package[:version]}\n")
       FileUtils.rm_rf(package_file_path(package))
-      expect_file_exists(package_file_path(package)).to be_false
+      expect_file_exists(package_file_path(package)).to eq false
       nb.install_package(package[:name])
-      expect_file_exists(package_file_path(package)).to be_false
+      expect_file_exists(package_file_path(package)).to eq false
       expect_contents(version_file).to eq("#{package[:version]}\n")
     end
 
@@ -92,7 +92,7 @@ describe NiseBosh do
       expect_contents(package_file_path(package)).to eq(package[:file_contents])
       expect_contents(version_file).to eq("#{package[:version]}\n")
       FileUtils.rm_rf(package_file_path(package))
-      expect_file_exists(package_file_path(package)).to be_false
+      expect_file_exists(package_file_path(package)).to eq false
       force_nb = NiseBosh::Builder.new(options.merge({:force_compile => true}), logger)
       force_nb.install_package(package[:name])
       expect_contents(package_file_path(package)).to eq(package[:file_contents])
@@ -109,7 +109,7 @@ describe NiseBosh do
         end
         fail_while_packaging_nb.install_package(package[:name])
       end.to raise_error
-      expect_file_exists(version_file).to be_false
+      expect_file_exists(version_file).to eq false
     end
   end
 
@@ -131,7 +131,7 @@ describe NiseBosh do
         expect_contents(install_dir, "packages", package, "dayo").to eq("tenshi\n")
       end
       related_packages do |package|
-        expect_file_exists(install_dir, "packages", package).to be_false
+        expect_file_exists(install_dir, "packages", package).to eq false
       end
     end
   end
@@ -149,13 +149,13 @@ describe NiseBosh do
       expect_contents(install_dir, "packages", "miku", "dayo").to eq("miku #{package[:version]}\n")
       expect_contents(install_dir, "packages", "luca", "dayo").to eq("tenshi\n")
       check_templates
-      expect_directory_exists(install_dir, "data", "packages").to be_true
+      expect_directory_exists(install_dir, "data", "packages").to eq true
     end
 
     it "should not install packags and only generate required files from template files when template_only given" do
       nb.install_job("legna", true)
-      expect_file_exists(install_dir, "packages", "miku", "dayo").to be_false
-      expect_file_exists(install_dir, "packages", "luca", "dayo").to be_false
+      expect_file_exists(install_dir, "packages", "miku", "dayo").to eq false
+      expect_file_exists(install_dir, "packages", "luca", "dayo").to eq false
       check_templates
     end
 
@@ -171,12 +171,12 @@ describe NiseBosh do
       nb.install_job("legna")
       nb = NiseBosh::Builder.new(options, logger)
       nb.install_job("yellows")
-      expect_file_exists(install_dir, "monit", "job", job_monit_file).to be_false
+      expect_file_exists(install_dir, "monit", "job", job_monit_file).to eq false
       expect_contents(yellow_monit).to eq("yellow_monit mode manual")
       nb = NiseBosh::Builder.new(options.merge({:keep_monit_files => true}), logger)
       nb.install_job("legna")
       check_templates
-      expect_file_exists(yellow_monit).to be_true
+      expect_file_exists(yellow_monit).to eq true
    end
   end
 
@@ -199,10 +199,10 @@ describe NiseBosh do
       FileUtils.cd(@archive_check_dir) do
         system("tar xvzf #{file_name} > /dev/null")
         expect_to_same(%W{#{options[:repo_dir]} dev_releases #{release_name}-#{release_version}.yml}, [@archive_check_dir, "release.yml"])
-        expect_file_exists(@archive_check_dir, "release", ".dev_builds", "jobs", "angel", "1.1-dev.tgz").to be_true
-        expect_file_exists(@archive_check_dir, "release", ".dev_builds", "jobs", "yellows", "0.1-dev.tgz").to be_true
-        expect_file_exists(@archive_check_dir, "release", ".final_builds", "packages", "luca", "1.tgz").to be_true
-        expect_file_exists(@archive_check_dir, "release", ".dev_builds", "packages", "miku", "1.1-dev.tgz").to be_true
+        expect_file_exists(@archive_check_dir, "release", ".dev_builds", "jobs", "angel", "1.1-dev.tgz").to eq true
+        expect_file_exists(@archive_check_dir, "release", ".dev_builds", "jobs", "yellows", "0.1-dev.tgz").to eq true
+        expect_file_exists(@archive_check_dir, "release", ".final_builds", "packages", "luca", "1.tgz").to eq true
+        expect_file_exists(@archive_check_dir, "release", ".dev_builds", "packages", "miku", "1.1-dev.tgz").to eq true
       end
     end
 
@@ -210,7 +210,7 @@ describe NiseBosh do
       file_name = File.join(@archive_dir, default_archive_name)
       FileUtils.cd(@archive_dir) do
         nb.archive(success_job, file_name)
-        expect(File.exists?(file_name)).to be_true
+        expect(File.exists?(file_name)).to eq true
       end
       check_archive_contents(file_name)
     end
@@ -218,35 +218,35 @@ describe NiseBosh do
     it "create archive at given file path" do
       file_name = File.join(@archive_dir, "miku.tar.gz")
       nb.archive(success_job, file_name)
-      expect(File.exists?(file_name)).to be_true
+      expect(File.exists?(file_name)).to eq true
       check_archive_contents(file_name)
     end
 
     it "create archive in given directory" do
       file_name = File.join(@archive_dir, default_archive_name)
       nb.archive(success_job, @archive_dir)
-      expect(File.exists?(file_name)).to be_true
+      expect(File.exists?(file_name)).to eq true
       check_archive_contents(file_name)
     end
   end
 
   describe "#job_exists?" do
     it "should return true when given job exists" do
-      expect(nb.job_exists?("legna")).to be_true
+      expect(nb.job_exists?("legna")).to eq true
     end
 
     it "should return false when given job does not exist" do
-      expect(nb.job_exists?("not_exist_job")).to be_false
+      expect(nb.job_exists?("not_exist_job")).to eq false
     end
   end
 
   describe "#package_exists?" do
     it "should return true when given package exists" do
-      expect(nb.package_exists?(package[:name])).to be_true
+      expect(nb.package_exists?(package[:name])).to eq true
     end
 
     it "should return false when given package does not exist" do
-      expect(nb.package_exists?("not_exist_package")).to be_false
+      expect(nb.package_exists?("not_exist_package")).to eq false
     end
   end
 end

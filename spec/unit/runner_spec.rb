@@ -22,7 +22,7 @@ describe Runner do
   end
 
   def check_installed_directories
-    expect_directory_exists(install_dir, "data", "packages").to be_true
+    expect_directory_exists(install_dir, "data", "packages").to eq true
   end
 
   def check_installed_files
@@ -51,7 +51,7 @@ describe Runner do
     it "should abort execution when 'n' given to the prompt" do
       out = %x[echo n | bundle exec ./bin/nise-bosh -d #{install_dir} --working-dir #{working_dir} #{release_dir} #{deploy_manifest} #{success_job} 2>&1]
       expect($?.exitstatus).to eq(0)
-      expect(out.match(/Abort.$/)).to be_true
+      expect(out).to match(/Abort.$/)
     end
 
     it "should setup given job with -y option" do
@@ -77,7 +77,7 @@ describe Runner do
     it "should raise an error when the number of command line arguments is wrong" do
       out = %x[bundle exec ./bin/nise-bosh -y  2>&1]
       expect($?.exitstatus).to eq(1)
-      expect(out.match(/^Arguments number error!$/)).to be_true
+      expect(out).to match(/^Arguments number error!$/)
     end
 
     it "should raise an error when invalid job name given" do
@@ -101,7 +101,7 @@ describe Runner do
     it "should raise an error when execution of packaging script fails" do
       out = %x[bundle exec ./bin/nise-bosh -y -d #{install_dir} --working-dir #{working_dir} #{release_dir} #{deploy_manifest} #{fail_job} 2>&1]
       expect($?.exitstatus).to eq(1)
-      expect(out.match(/packaging: line 3: not_exist_command: command not found/)).to be_true
+      expect(out).to match(/packaging: line 3: not_exist_command: command not found/)
     end
 
     it "should not re-install the packages of the given job which has been already installed the same version" do
@@ -131,11 +131,11 @@ describe Runner do
     it "should keep existing monit files when the --keep-monit-files option given" do
       out = %x[bundle exec ./bin/nise-bosh -y -d #{install_dir} --working-dir #{working_dir} #{release_dir} #{deploy_manifest} #{success_job} 2>&1]
       out = %x[bundle exec ./bin/nise-bosh --keep-monit-files -y -d #{install_dir} --working-dir #{working_dir} #{release_dir} #{deploy_manifest} yellows 2>&1]
-      expect_file_exists(install_dir, "monit", "job", job_monit_file).to be_true
-      expect_file_exists(install_dir, "monit", "job", "0000_yellows.yellows.monitrc").to be_true
+      expect_file_exists(install_dir, "monit", "job", job_monit_file).to eq true
+      expect_file_exists(install_dir, "monit", "job", "0000_yellows.yellows.monitrc").to eq true
       out = %x[bundle exec ./bin/nise-bosh -y -d #{install_dir} --working-dir #{working_dir} #{release_dir} #{deploy_manifest} #{success_job} 2>&1]
       check_installed_files
-      expect_file_exists(install_dir, "monit", "job", "0000_yellows.yellows.monitrc").to be_false
+      expect_file_exists(install_dir, "monit", "job", "0000_yellows.yellows.monitrc").to eq false
     end
 
     it "should change index value to integer when -i option given." do
@@ -166,7 +166,7 @@ describe Runner do
     it "should install only given packages when --no-dpendency option given" do
       out = %x[bundle exec ./bin/nise-bosh -y -p --no-dependency -d #{install_dir} --working-dir #{working_dir} #{release_dir} luca 2>&1]
       expect($?.exitstatus).to eq(0)
-      expect_file_exists(install_dir, "packages", "miku", "dayo").to be_false
+      expect_file_exists(install_dir, "packages", "miku", "dayo").to eq false
       expect_contents(install_dir, "packages", "luca", "dayo").to eq("tenshi\n")
     end
 
@@ -188,7 +188,7 @@ describe Runner do
       end
       out = %x[bundle exec ./bin/nise-bosh -y -a -d #{install_dir} --working-dir #{working_dir} #{release_dir} #{deploy_manifest} #{success_job} 2>&1]
       expect($?.exitstatus).to eq(0)
-      expect_file_exists(default_archive_name).to be_true
+      expect_file_exists(default_archive_name).to eq true
 
       extraction_dir = File.join(tmp_dir, "archive")
       abs_archive = File.absolute_path(default_archive_name)
@@ -205,14 +205,14 @@ describe Runner do
     it "should create job archive in given directory with default file name" do
       out = %x[bundle exec ./bin/nise-bosh -y -a -d #{install_dir} --working-dir #{working_dir} #{release_dir} #{deploy_manifest} #{success_job} #{archive_dir} 2>&1]
       expect($?.exitstatus).to eq(0)
-      expect_file_exists(archive_dir, default_archive_name).to be_true
+      expect_file_exists(archive_dir, default_archive_name).to eq true
     end
 
     it "should create job archive with given file name " do
       archive_name = "#{archive_dir}/angel.tar.gz"
       out = %x[bundle exec ./bin/nise-bosh -y -a -d #{install_dir} --working-dir #{working_dir} #{release_dir} #{deploy_manifest} #{success_job} #{archive_name} 2>&1]
       expect($?.exitstatus).to eq(0)
-      expect_file_exists(archive_name).to be_true
+      expect_file_exists(archive_name).to eq true
     end
   end
 
