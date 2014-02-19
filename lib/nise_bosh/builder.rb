@@ -251,7 +251,7 @@ module NiseBosh
       job_spec["networks"][0]["static_ips"] ||= [ip_address]
 
       deployment_plan = Bosh::Director::DeploymentPlan::Planner.new(@deploy_manifest)
-      deployment_plan.parse
+      deployment_plan.parse(Bosh::Director::EventLog::Log.new)
       deployment_plan_compiler = Bosh::Director::DeploymentPlan::Assembler.new(deployment_plan)
       deployment_plan_compiler.bind_properties
       deployment_plan_compiler.bind_instance_networks
