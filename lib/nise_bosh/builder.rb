@@ -250,8 +250,7 @@ module NiseBosh
       job_spec = find_by_name(@deploy_manifest["jobs"], job_name)
       job_spec["networks"][0]["static_ips"] ||= [ip_address]
 
-      deployment_plan = Bosh::Director::DeploymentPlan::Planner.new(@deploy_manifest)
-      deployment_plan.parse(Bosh::Director::EventLog::Log.new)
+      deployment_plan = Bosh::Director::DeploymentPlan::Planner.parse(@deploy_manifest, Bosh::Director::EventLog::Log.new, {})
       deployment_plan_compiler = Bosh::Director::DeploymentPlan::Assembler.new(deployment_plan)
       deployment_plan_compiler.bind_properties
       deployment_plan_compiler.bind_instance_networks
